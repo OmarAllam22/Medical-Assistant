@@ -1,0 +1,7 @@
+python=3.10
+langchain
+langchain_community
+langchain_google_genai
+langchain_chroma
+pypdf
+termcolor
