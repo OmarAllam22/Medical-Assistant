@@ -19,11 +19,12 @@ retriever_prompt = PromptTemplate(template=retriever_temp, input_variables=['his
 summarization_temp = """
 You are a helpful medical differential diagnosis expert. Your will be called many times. 
 you task is to summarize the conversation text given to you and keep the important information.
-If the text is as whole important and not long text, not summarize it.
-Also if you are given the person_name or any background about it, keep it in your summary.
-If the chat has MCQ questions don't summarize them and return them as they entered.
-Try to keep your summary coincise.
-conversation given to you: {text}
+your summary should be structured in the following three components:
+1. MCQ questions asked throught the conversation with their true answers (return them as they entered).
+2. Personal Information about the user ex: Name, Age, medical background (return summary about them if they exist withtin the conversation).
+3. short but informative summary of the whole previous conversations.
+
+this is the conversation text given to you: {text}
 """
 summarization_prompt = PromptTemplate(template=summarization_temp, input_variables=['text'])
 
