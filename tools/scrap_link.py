@@ -1,3 +1,6 @@
+import requests
+from bs4 import BeautifulSoup
+
 class ScrapLink:
     """
     scrap provided Link using DuckDuckGo search Engine.
@@ -16,13 +19,14 @@ class ScrapLink:
 
         if soup and hidden_link:             
             soup = self._get_soup_from_link(hidden_link)
-            text = ""
-            for par in soup.find_all('p'):
+        text = ""
+        try:
+            for par in soup.findAll('p'):
                 text= text + " " + par.get_text()
             return text[:self.max_chars].strip()
-        else:
-            print("Error while scraping")
-
+        except Exception as e: 
+            return f"Error Scrapping this Link with the following exception: {e}"
+        
     def _get_soup_from_link(self, link):
         response = requests.get(link, headers=self.headers)
         if response.status_code == 200:

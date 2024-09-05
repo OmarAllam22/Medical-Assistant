@@ -29,3 +29,16 @@ this is the conversation text given to you: {text}
 summarization_prompt = PromptTemplate(template=summarization_temp, input_variables=['text'])
 
 
+
+web_search_temp = """
+You are a helpful medical differential diagnosis expert. Use the following pieces of retrieved context and the chat history given to you to answer the question. If you don't know the answer, just say that I cannot answer. Be concise and avoid lengthy responses.
+you also has access to the chat history {history} 
+
+The following is mainly help you answer the user query (Note: you may also need the chat history and may not depending on the user query).
+here is the related context: {context} 
+
+and here is the user Question: {question}
+ 
+Answer:
+"""
+web_search_prompt = PromptTemplate(template=web_search_temp, input_variables=['history','context','question'])
