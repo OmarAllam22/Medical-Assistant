@@ -1,8 +1,6 @@
 import os, yaml
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain.retrievers.multi_query import MultiQueryRetriever
 
@@ -39,15 +37,10 @@ def prepare_retriever(retrieved_docs_per_query=5, is_multi_query=True, api_confi
     Returns:
     A Retriever object (either a single-query or multi-query retriever).
     """
- 
-    loader = PyPDFDirectoryLoader("books")
-    pages = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    splits = text_splitter.split_documents(pages)
 
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-    retriever = vectorstore.as_retriever(search_kwargs={"k": retrieved_docs_per_query})
+    vectordb = Chroma(persist_directory="databases", embedding_function=embeddings)
+    retriever = vectordb.as_retriever(search_kwargs={"k": retrieved_docs_per_query})
 
     if is_multi_query:
         llm = initialize_gemini(api_config_path=api_config_path)

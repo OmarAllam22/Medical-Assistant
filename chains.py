@@ -65,11 +65,15 @@ class RagChain:
             query = input(colored("Input your query: ",'green'))
             if "exit" == query.lower().strip():
                 break
-            response = main_chain.invoke(query)
+            chunks = main_chain.stream(query)
+            response = ""
+            print(colored("Answer: ","green"), end="")
+            for chunk in chunks:
+                print(colored(chunk,"magenta"), end="", flush=True)
+                response += chunk
             with open("summary.txt", 'a') as f:
                 f.write("user query: " + query + "\n" + "llm response: "+ response)
-            print(colored("Answer: ","green"), colored(response,"magenta"))
-            with open("summary.txt", 'r') as f:
+            with open("summary.txt", 'r') as f:  
                 self.history = f.read()
 
             self.history = summarization_chain.invoke(self.history)
