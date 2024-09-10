@@ -3,4 +3,5 @@ langchain_community
 langchain_google_genai
 langchain_chroma
 pypdf
+pypdf2
 termcolor

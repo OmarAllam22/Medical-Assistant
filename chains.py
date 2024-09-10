@@ -4,7 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 from termcolor import colored
 from tools.search_web import WebSearch
 
-class RagChain:
+class Agent:
     def __init__(self,
                  rag_model, 
                  summarization_model, 
