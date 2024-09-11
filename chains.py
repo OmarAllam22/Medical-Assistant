@@ -7,23 +7,89 @@ from prompts.web_search_prompt import web_search_prompt
 from prompts.summarization_prompt import summarization_prompt
 from prompts.router_prompt import router_prompt
 from prompts.ReAct_system_template import ReAct_system_temp
+from utils import initialize_gemini, prepare_retriever
 from langchain_core.prompts import ChatPromptTemplate
 import re
 
-class Agent:
-    def __init__(self,
-                 rag_model, 
-                 summarization_model,
-                 react_model,
-                 tools:list, 
-                 retriever
-                 ):
+
+class ReActAgent:
+    def __init__(self, model, system:str="", history:str=""):
+        self.model = model
+        self.system = system
+        self.history = history
         
-        self.rag_model = rag_model
-        self.summarization_model = summarization_model
-        self.react_model = react_model
-        self.tools = tools
-        self.retriever = retriever
+        self.messages = []        
+        if self.system:
+            self.messages.append(("system", self.system))
+
+    def _execute_search_chain(self, query):
+        with open("summary.txt", 'r') as f:  
+            self.history = f.read()
+        self.rag_model = initialize_gemini(api_config_path="config/api1.yaml") # model used to rewrite the user query into multiple queries to get versatile retrieved context
+        self.web_search_prompt = web_search_prompt
+        object = WebSearch()
+        chain = (
+                {"context": object.search_query , "question": RunnablePassthrough(), "history":  RunnableLambda(lambda x: self.history)}
+                | self.web_search_prompt
+                | self.rag_model
+                | StrOutputParser()
+        )
+        return chain.invoke(query)
+
+    def _execute(self, message:str="", verbose=True):
+        if message:
+            self.messages.append(("user",message))
+        result = self.model.invoke(ChatPromptTemplate(self.messages).invoke({}))
+        if verbose:
+            print(message)
+        self.messages.append(("ai",result.content))
+        return result.content
+
+    
+    def loop(self, Query, verbose=True):
+        response = self._execute(Query, verbose=verbose)
+        print(response)
+        web_search = self._execute_search_chain
+        for i in range(20):
+            print("@@@@@@@@@@@response$$$$$$", response,"@@@@@@@@@@@response$$$$$$" )
+            if "PAUSE" in response and "answer:" not in response.lower():
+                match = re.findall(r'Action: ([a-z0-9_]+): "(.*?)"', response)
+                if match:
+                    tool, tool_input = match[0][0], match[0][1]
+                else:
+                    tool = "None" 
+                
+                if tool == 'web_search':
+                    tool_res = eval(f"{tool}('{tool_input}')")
+                    response = f"Observation: {tool_res}"
+                elif tool == 'None':
+                    response = f"Observation: I cannot answer using my available tools. so will answer this question from my own knowledge"
+            
+            else:
+                try:
+                    response = "Answer: "+ re.findall(r"Answer: (.+)", response, re.IGNORECASE)[0]
+                except:
+                    try:
+                        response = "Answer: "+ re.findall(r"Thought: (.+)", response, re.IGNORECASE)[0]
+                    except:
+                        response = "Answer: Please ask me again as There is an Error displaying the results."
+                return response
+            
+            response = self._execute(response,verbose=verbose)
+        return response
+    
+    def __call__(self, Query, verbose=True):
+        return self.loop(Query, verbose=verbose)
+
+############################################################################################################
+
+
+class Agent:
+    def __init__(self):
+        self.react_model = initialize_gemini(api_config_path="config/api4.yaml")
+        self.rag_model = initialize_gemini(api_config_path="config/api1.yaml") # model used to rewrite the user query into multiple queries to get versatile retrieved context     
+        self.summarization_model = initialize_gemini(api_config_path="config/api2.yaml")
+        self.retriever = prepare_retriever()
         self.router_prompt = router_prompt
         self.retriever_prompt = retriever_prompt
         self.summarization_prompt = summarization_prompt
@@ -66,15 +132,19 @@ class Agent:
         chain = self.summarization_prompt | self.summarization_model | StrOutputParser()
         return chain.invoke(text)
 
-    def _execute_router_chain(self, query)->str:
+    def _execute_router_chain(self,query)->str:
         """
         returns the datasource to which will be routed a choice from ['vectorstore','web_search'].
         """
-        with open('book_summaries_for_Agent.txt','r') as f:
-            content = f.read()
+        try:
+            with open('book_summaries_for_Agent.txt','r') as f:
+                content = f.read()
+        except FileNotFoundError:
+            print(colored("Error: 'book_summaries_for_Agent.txt' not found.", 'red'))
+            return None  # Handle the case where the file is missing
 
         chain = (
-            {"question": RunnablePassthrough(), "content": RunnableLambda(lambda x: content)} 
+            {"question": RunnablePassthrough(), "context": RunnableLambda(lambda x: content),"history":  RunnableLambda(lambda x: self.history)} 
             | router_prompt 
             | self.rag_model 
             | JsonOutputParser()
@@ -82,7 +152,7 @@ class Agent:
         return chain.invoke(query)['datasource']
     
     def _execute_ReAct(self, query):
-        object = ReActAgent(self.react_model, self.tools, system=ReAct_system_temp)
+        object = ReActAgent(self.react_model, system=ReAct_system_temp, history=self.history)
         return object(query)
 
     def invoke(self):
@@ -93,10 +163,11 @@ class Agent:
                 break
             try:
                 datasource = self._execute_router_chain(query)
-                print(colored("Answer: ","green"), end="")
+                
+                print(colored(f"Answer from '{datasource}': ","green"), end="")
                 if datasource == 'vectorstore':
                     response = self._execute_rag_chain(query)
-                    print(colored(response,"magenta"), end="", flush=True)
+                    print(colored(response,"magenta"), flush=True)
                     with open("summary.txt", 'a') as f:
                         f.write("user query: " + query + "\n" + "llm response: "+ response)
                     with open("summary.txt", 'r') as f:  
@@ -105,7 +176,7 @@ class Agent:
 
                 elif datasource == 'web_search':      
                     response = self._execute_ReAct(query)
-                    print(colored(response,"magenta"), end="", flush=True)
+                    print(colored(response,"magenta"), flush=True)
                     with open("summary.txt", 'a') as f:
                         f.write("user query: " + query + "\n" + "llm response: "+ response)
                     with open("summary.txt", 'r') as f:  
@@ -117,53 +188,3 @@ class Agent:
 
 #####################################################################################
 
-class ReActAgent:
-    def __init__(self, model, tools, system:str=""):
-        self.model = model
-        self.tools = tools
-        self.system = system
-        
-        self.messages = [] 
-        if self.system:
-            self.messages.append(("system", self.system))
-
-        
-
-    def _execute(self, message:str="", verbose=True):
-        if message:
-            self.messages.append(("user",message))
-        result = self.model.invoke(ChatPromptTemplate(self.messages).invoke({}))
-        if verbose:
-            print(message)
-            print(result.content)
-        self.messages.append(("ai",result.content))
-        return result.content
-
-    
-    def loop(self, Query, verbose=True):
-        response = self._execute(Query, verbose=verbose)
-        print(response)
-        for i in range(20):
-            if "PAUSE" in response and "Action" in response:
-                match = re.findall(r'Action: ([a-z0-9_]+): "(.*?)"', response)
-                if match:
-                    tool, tool_input = match[0][0], match[0][1]
-                else:
-                    tool, tool_input = "None" , ""
-                
-                if tool == 'web_search':
-                    tool_res = eval(f"{tool}('{tool_input}')")
-                    response = f"Observation: {tool_res}"
-                else:
-                    response = f"Observation: Tool not found in accessed tools but I answered from my own knowledge with this answer: {tool_input}"
-                print(response)
-            elif "answer" in response.lower():
-                response = "Answer: "+ re.findall(r"Answer: (.+)", response, re.IGNORECASE)[0]
-                print(response)
-                return response
-
-            response = self._execute(response,verbose=verbose)
-        return response
-    
-    def __call__(self, Query, verbose=True):
-        self.loop(Query, verbose=verbose)

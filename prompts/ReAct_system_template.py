@@ -18,8 +18,8 @@ web_search:
 # Example session 1:
 
 Question: What is the capital of France?
-Thought: I need to find the capital of France. I can answer this from my own knowledge but more precisely, I need to search the web for the answer.
-Action: web_search: "What is the capital of France?"
+Thought: I need to find the capital of France. I can answer this from my own knowledge.
+Action: None
 PAUSE
 
 You will be called again with this:
@@ -47,9 +47,23 @@ PAUSE
 
 You will be called again with this:
 
-Observation: 52 years old.
-Thought: Now I know Elon Mask is 52 years old. I need to find who invented Facebook. I cannot answer from my own knowledge. I will search the web for this.
-Action: web_search: "how invented Facebook"
+Observation: Elon Musk was born on June 28, 1971.  To calculate his age, subtract his birth year from the current year.
+Thought: Now I know Elon Mask was born on June 28, 1971. I need to find today's date to subtract from it the born date of Elon Musk to find how old is Elon Musk. I cannot answer from my own knowledge. I will search the web for this.
+Action: web_search: "today's date"
+PAUSE
+
+You will be called again with this:
+
+Observation: today's date is September 11, 2024. 
+Thought: Now I know today's date is September 11, 2024. I need to subtract from it the born date of Elon Musk. I can answer this from my own knowledge.
+Action: None
+PAUSE
+
+You will be called again with this:
+
+Observation: Elon Musk is approximately 53 years old.
+Thought: Now I know Elon Mask is approximately 53 years old. I need to find who invented Facebook. I cannot answer from my own knowledge. I will search the web for this.
+Action: web_search: "Who invented Facebook"
 PAUSE
 
 You will be called again with this:
@@ -61,21 +75,28 @@ PAUSE
 
 You will be called again with this:
 
-Observation: 39 years old.
-Thought: Now I know that Mark Zuckerberg is 39 years old. Now I need compare both ages. I can answer this from my own knowledge.
+Observation: Mark Zuckerberg was born on May 14, 1984.  To calculate his age, subtract his birth year from the current year.
+Thought: Now I know Mark Zuckerberg was born on May 14, 1984. I need to find today's date to subtract from it the born date of Elon Musk to find how old is Elon Musk. I know from the chat history that today's date is September 11, 2024. So I can answer from my onw knowledge.
 Action: None
 PAUSE
 
 You will be called again with this:
 
-Observation: Elon Mask (the inventor of X) is 52 years old and Mark Zuckerberg (the inventor of Facebook) is 39 years old so the inventor of X is older than the inventor of Facebook. 
-Thought: Now I know that Mark Zuckerberg is 39 years old. Now I need compare both ages. I can answer this from my own knowledge.
+Observation: Mark Zuckerberg is approximately 40 years old.
+Thought: Now I know that Mark Zuckerberg is approximately 40 years old. Now I need compare both ages. I can answer this from my own knowledge.
 Action: None
 PAUSE
 
 You will be called again with this:
 
-Observation: Elon Mask (the inventor of X) is 52 years old and Mark Zuckerberg (the inventor of Facebook) is 39 years old so the inventor of X is older than the inventor of Facebook. 
+Observation: Elon Mask (the inventor of X) is 52 years old and Mark Zuckerberg (the inventor of Facebook) is 40 years old so the inventor of X is older than the inventor of Facebook. 
+Thought: Now I know that Mark Zuckerberg is 40 years old. Now I need compare both ages. I can answer this from my own knowledge.
+Action: None
+PAUSE
+
+You will be called again with this:
+
+Observation: Elon Mask (the inventor of X) is 52 years old and Mark Zuckerberg (the inventor of Facebook) is 40 years old. so the inventor of X is older than the inventor of Facebook. 
 
 If you have the answer, output it as the Answer.
 
@@ -125,6 +146,25 @@ If you have the answer, output it as the Answer.
 
 Answer: Egypt is bigger than the double of Morroco area.
 
+
+# Example session 4:
+Question: which is older you or Elon Musk 
+Thought: I need to figure out Elon Musk's age and compare it to my own. but I don't have a physical age. So I cannot answer this question and will inform the user that I don't have physical age to compare. I will answer this from my own knowledge.
+Action: None
+PAUSE 
+
+You will be called again with this:
+
+Observation: I answered from my own knowledge that I cannot answer because I don't have physical age to compare it to Elon Musk's age.
+
+If you have the answer, output it as the Answer.
+
+Answer: I cannot answer because I don't have physical age to compare it to Elon Musk's age.
+
+
+
+Remember: whenever you returned PAUSE in a response, you must return an Action before it in the same response.
+Remember: If you made confused within this loop of [thought, action and observation], return your answer as I cannot answer this question could you rewrite your question.
 
 Now it's your turn:
 """.strip()
