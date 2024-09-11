@@ -7,16 +7,16 @@ from prompts.web_search_prompt import web_search_prompt
 from prompts.summarization_prompt import summarization_prompt
 from prompts.router_prompt import router_prompt
 from prompts.ReAct_system_template import ReAct_system_temp
+from prompts.llm_knowledge_prompt import llm_knowledge_prompt
 from utils import initialize_gemini, prepare_retriever
 from langchain_core.prompts import ChatPromptTemplate
 import re
 
 
 class ReActAgent:
-    def __init__(self, model, system:str="", history:str=""):
+    def __init__(self, model, system:str=""):
         self.model = model
         self.system = system
-        self.history = history
         
         self.messages = []        
         if self.system:
@@ -94,6 +94,7 @@ class Agent:
         self.retriever_prompt = retriever_prompt
         self.summarization_prompt = summarization_prompt
         self.web_search_prompt = web_search_prompt
+        self.llm_knowledge_prompt = llm_knowledge_prompt
         self.history = ""
         # initialize the history file to empty string.
         with open("summary.txt", 'w') as f:
@@ -134,7 +135,7 @@ class Agent:
 
     def _execute_router_chain(self,query)->str:
         """
-        returns the datasource to which will be routed a choice from ['vectorstore','web_search'].
+        returns the datasource to which will be routed a choice from ['vectorstore','web_search','llm_knowledge'].
         """
         try:
             with open('book_summaries_for_Agent.txt','r') as f:
@@ -152,8 +153,17 @@ class Agent:
         return chain.invoke(query)['datasource']
     
     def _execute_ReAct(self, query):
-        object = ReActAgent(self.react_model, system=ReAct_system_temp, history=self.history)
+        object = ReActAgent(self.react_model, system=ReAct_system_temp)
         return object(query)
+    
+    def _execute_llm_chain(self, query):
+        chain = (
+                {"question": RunnablePassthrough(), "history":  RunnableLambda(lambda x: self.history)}
+                | self.llm_knowledge_prompt
+                | self.rag_model
+                | StrOutputParser()
+        )
+        return chain.invoke(query)
 
     def invoke(self):
 
@@ -182,7 +192,15 @@ class Agent:
                     with open("summary.txt", 'r') as f:  
                         self.history = f.read()
                     self.history = self._excute_summarization_chain(self.history)
-                    
+                elif datasource == 'llm_knowledge':
+                    response = self._execute_llm_chain(query)
+                    print(colored(response,"magenta"), flush=True)
+                    with open("summary.txt", 'a') as f:
+                        f.write("user query: " + query + "\n" + "llm response: "+ response)
+                    with open("summary.txt", 'r') as f:  
+                        self.history = f.read()
+                    self.history = self._excute_summarization_chain(self.history)
+
             except Exception as e: 
                 print(colored(f"Error arises due to the following exception {e}", 'red'))
 
