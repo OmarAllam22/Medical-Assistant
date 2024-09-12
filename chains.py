@@ -8,7 +8,8 @@ from prompts.summarization_prompt import summarization_prompt
 from prompts.router_prompt import router_prompt
 from prompts.ReAct_system_template import ReAct_system_temp
 from prompts.llm_knowledge_prompt import llm_knowledge_prompt
-from utils import initialize_gemini, prepare_retriever
+from utils.initialize_gemini import initialize_gemini
+from utils.prepare_retriever import prepare_retriever
 from langchain_core.prompts import ChatPromptTemplate
 import re
 
@@ -22,7 +23,7 @@ class ReActAgent:
         if self.system:
             self.messages.append(("system", self.system))
 
-    def _execute_search_chain(self, query):
+    def web_search(self, query):
         with open("summary.txt", 'r') as f:  
             self.history = f.read()
         self.rag_model = initialize_gemini(api_config_path="config/api1.yaml") # model used to rewrite the user query into multiple queries to get versatile retrieved context
@@ -49,7 +50,6 @@ class ReActAgent:
     def loop(self, Query, verbose=True):
         response = self._execute(Query, verbose=verbose)
         print(response)
-        web_search = self._execute_search_chain
         for i in range(20):
             print("@@@@@@@@@@@response$$$$$$", response,"@@@@@@@@@@@response$$$$$$" )
             if "PAUSE" in response and "answer:" not in response.lower():
@@ -60,6 +60,7 @@ class ReActAgent:
                     tool = "None" 
                 
                 if tool == 'web_search':
+                    tool = 'self.web_search'
                     tool_res = eval(f"{tool}('{tool_input}')")
                     response = f"Observation: {tool_res}"
                 elif tool == 'None':
@@ -104,8 +105,8 @@ class Agent:
         """
         helper function used in the chain to get the text from the retrieved docs 
         """
-        return "\n\n".join(doc.page_content for doc in docs)
-    
+        return "\n\n".join(doc[0].page_content if len(doc)==2 else doc.page_content for doc in docs)
+
     
     def _execute_rag_chain(self, query):
         chain = (
@@ -176,6 +177,7 @@ class Agent:
                 
                 print(colored(f"Answer from '{datasource}': ","green"), end="")
                 if datasource == 'vectorstore':
+                    print(colored("Optimizing the answer from our databases...🛢️📂","light_green"), flush=True)
                     response = self._execute_rag_chain(query)
                     print(colored(response,"magenta"), flush=True)
                     with open("summary.txt", 'a') as f:
@@ -185,6 +187,7 @@ class Agent:
                     self.history = self._excute_summarization_chain(self.history)
 
                 elif datasource == 'web_search':      
+                    print(colored("Preparing the best answer for you...🌐🤖","light_green"), flush=True) 
                     response = self._execute_ReAct(query)
                     print(colored(response,"magenta"), flush=True)
                     with open("summary.txt", 'a') as f:

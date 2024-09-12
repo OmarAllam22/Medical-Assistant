@@ -7,9 +7,10 @@ class ScrapLink:
     """
     headers = {'user-agent': 'my-app/0.0.1'}
     
-    def __init__(self, max_chars = 5000,headers=headers):
+    def __init__(self, max_chars = 5000,headers=headers, set_max_chars=False):
         self.headers = headers
         self.max_chars = max_chars
+        self.set_max_chars = set_max_chars
 
     def scrap(self, link):
         soup = self._get_soup_from_link(link)
@@ -23,7 +24,10 @@ class ScrapLink:
         try:
             for par in soup.findAll('p'):
                 text= text + " " + par.get_text()
-            return text[:self.max_chars].strip()
+            if self.set_max_chars:
+                return text[: self.max_chars].strip()
+            else:
+                return text[:].strip()
         except Exception as e: 
             return f"Error Scrapping this Link with the following exception: {e}"
         

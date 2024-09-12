@@ -3,11 +3,11 @@ from bs4 import BeautifulSoup
 from .scrap_link import ScrapLink
 
 class WebSearch(ScrapLink):
-    def __init__(self, num_top_links = 5):
+    def __init__(self, num_top_links = 2):
         self.search_result = {}
         self.result_text = ""
         self.top_links = num_top_links 
-        super().__init__(max_chars = 5000)
+        super().__init__(set_max_chars=False)
     
     def search_query(self, query):
         response = requests.get(f"https://html.duckduckgo.com/html/?q={query}", headers=super().headers)

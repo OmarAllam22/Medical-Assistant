@@ -1,6 +1,9 @@
-from utils import initialize_gemini, prepare_retriever
 from chains import Agent
-import argparse
+
+import warnings
+
+warnings.filterwarnings("ignore", message="The function `loads` is in beta")
+
 
 print("Welcome to our medical assistant.😊") 
 
