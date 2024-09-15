@@ -80,7 +80,9 @@ class ReActAgent:
             str: The improved answer.
         """
         is_good_answer = self.grad_answer_object(query=query, answer=answer)
-        while True:
+        counter = 0
+        while counter<3:
+            counter-=1 # this counter to prevent stucking the loop of obtimizing answers
             if is_good_answer.lower() == 'no':
                 print(colored("we are optimizing your answer...","red"),flush=True)
                 answer = self.__call__("rewrite the following query to give a better answer. "+query)
