@@ -1,16 +1,14 @@
+import warnings
+warnings.filterwarnings("ignore", message="The function `loads` is in beta")
+from termcolor import colored
 from agent import ReActAgent
 
-import warnings
+print(colored("Welcome to our medical assistant.😊",'green')) # Introductory message to the user
 
-warnings.filterwarnings("ignore", message="The function `loads` is in beta")
-
-
-print("Welcome to our medical assistant.😊") 
-
-chain = ReActAgent(verbose=True)
+medical_assistant = ReActAgent(verbose=True, grad_answer=False)
 
 if __name__ == '__main__':
-    chain.invoke()
+    medical_assistant.start()
 
 
 

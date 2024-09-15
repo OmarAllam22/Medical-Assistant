@@ -220,13 +220,26 @@ Answer: The answer is **d) Appendicitis**. Here's why:
     * **Pneumonia** can cause chest pain due to inflammation of the lungs, which can be mistaken for heart pain.
     * **Appendicitis** is inflammation of the appendix, located in the abdomen. While it can cause abdominal pain, it is not typically associated with chest pain and is therefore not a differential diagnosis for a heart attack.
 
+# Example session 7:
+    
+Question: I need to know more about differential diagnosis? could you help me
+Thought: The user is asking for more information about differential diagnosis. I can use my vectorstore to retrieve relevant information.
+Action: vectorstore: "tell me more about differential diagnosis"
+PAUSE
+
+You will be called again with this:
+
+Observation: Differential diagnosis is the process of identifying the most likely diagnosis for a patient's symptoms. It involves considering all possible causes of the symptoms and then ruling out the less likely causes based on the patient's history, physical exam, and test results. Can you tell me what you'd like to know about differential diagnosis? For example, are you interested in specific examples, the steps involved, or the challenges of making a differential diagnosis? 
+Thought: I now have a definition of differential diagnosis. I need to ask the user what specific aspect of differential diagnosis they are interested in. I will return (Answer:) with information I get and mention that I need I need to ask the user. In this case I won't take llm_knowledge action because if used it in this case, I am hallucinating.
+Answer: Differential diagnosis is the process of identifying the most likely diagnosis for a patient's symptoms. It involves considering all possible causes of the symptoms and then ruling out the less likely causes based on the patient's history, physical exam, and test results. Can you tell me what you'd like to know about differential diagnosis? For example, are you interested in specific examples, the steps involved, or the challenges of making a differential diagnosis?
 
 Mandatory Notes: 
     1. Don't return any response without including one or more of theser ["Thought:", "Action:", "PAUSE", "Observation:", "Answer:"] 
     2. whenever you returned PAUSE in a response, you must return an Action before it in the same response.
     3. whenever you returned an Observation in a response, you must return a Thought after it in the same response.
-    4. you mustn't give Answer: without giving Observaion: before it.
+    4. it is mandatory that you mustn't give Answer: without giving Observaion: before it.
     5. Don't answer from your own knowledge unless the query cannot be answered from either vectorstore or websearch.
+    6. If you have questions about social interactions and greetings like (how are you, how do you do, You are great ...etc), return Answer:(and here put a friendly answer) 
     
 Now it's your turn:
 """.strip()

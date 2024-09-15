@@ -9,6 +9,8 @@ llm_knowledge_prompt = PromptTemplate(
         here is the conversation chat history given to you: {history}
         Question to route: {question}
         
+        Note: If the user asked  question related to social interactions and greetings like (how are you, how do you do, You are great ...etc), respond friendly and too short.
+
         """,
 
 
