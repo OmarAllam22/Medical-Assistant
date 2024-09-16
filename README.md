@@ -34,28 +34,23 @@ ________________
 ## 📘 How to use (You have 2 choices):
 
 ### First, For *Linux users*:
-   * 1️⃣ run `git clone https://github.com/OmarAllam22/Medical-Assistant.git`
+   * 1️⃣ run `git clone https://github.com/OmarAllam22/Medical-Assistant.git` to clone the repo.
    * 2️⃣ enter the directory of the project  `cd Medical-Assitant`
    * 3️⃣ run the setup script `chmod +x setup.sh && ./setup.sh`
-   * make sure the 
+   * make sure your python version is 3.10 or lower (ChromaDB used in the project currently doesn't support newer python versions)
+     you can run `python --version`.
+     if you have a version newer than 3.10 run `sudo apt-get install python 3.10` for ubuntu users
    * 4️⃣ initialize the terminal assistant with specifing the mode (--verbose or --no-verbose) `./main_script.sh --verbose`
 -------------
-### Second, For *linux users* via a docker image:
-   * 1️⃣ From your local machine's terminal, **run `xhost +`**.
-      - This step makes your machine's X-server open to connections from any host (as we want to connect this server (located on your local machine) from inside the docker container).
-      - This X-server is enabled for applications that needs to run GUI from inside docker container (as docker containers is mainly CLI-based).
-   * 2️⃣ From terminal, **run `docker build -t app_image .`**  
-   * 3️⃣ From terminal, **run `docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e DISPLAY=$DISPLAY -p 80:8501 --name app app_image`**
-      - This `-v /tmp/.X11-unix:/tmp/.X11-unix:ro` This mounts the local **/tmp/.X11-unix** directory to the container's **/tmp/.X11-unix** directory in **read-only** mode. This is typically used for running graphical applications within the container (GoogleChrome in our case).
-      - This `-p 80:8501` maps port 8501 inside the container (default port for streamlit) to port 80 on the local host machine (default port for localhost).
-   * 4️⃣ From your local machine, open a any web browser tab and **search for `http://localhost`**.
+### Second, For *Windows users* via a docker image:
+   * 1️⃣ from cmd, run `git clone https://github.com/OmarAllam22/Medical-Assistant.git` to clone the repo.
+   * 2️⃣ build the image from either docker or Docker-Desktop [see this as a guide](https://www.youtube.com/watch?v=_6yIwDp1vsY).
 ________________
 ## 📘 Resources:
 
 * Hands on LangChain tutorials. [Here](https://python.langchain.com/v0.2/docs/tutorials/)
 * Docker By Ahmed Sami. [Here](https://www.youtube.com/watch?v=PrusdhS2lmo&t=4310s)
-* Building GUI application with docker introducing `X-server` concept. [Here](https://www.youtube.com/watch?v=cMsIT2otEjA&t=368s)
-* Guide to building streamlit chatbot. [Here](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)
-* About `streamlit.session_state` concept. [Here](https://docs.streamlit.io/get-started/fundamentals/advanced-concepts) 
-* Using chromedriver and selenium on linux. [Here](https://www.youtube.com/watch?v=67h3IT2lm40)
+* Advanced RAG technique (my advice is not be overheaded with their names, just focus on the logic). [Here](https://github.com/NisaarAgharia/Advanced_RAG/tree/main)
+* Building simple ReAct agent from scratch. [Here](https://www.youtube.com/watch?v=hKVhRA9kfeM) and [this is my repo about it](https://github.com/OmarAllam22/my_ReAct_agent/tree/main)
+
 ________________
