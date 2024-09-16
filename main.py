@@ -1,7 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore", message="The function `loads` is in beta")
 from termcolor import colored
-from agent import ReActAgent
+from main_agent import ReActAgent
 
 print(colored("Welcome to our medical assistant.😊",'green')) # Introductory message to the user
 
