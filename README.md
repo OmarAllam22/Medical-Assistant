@@ -1,6 +1,6 @@
 # Medical-Assistant (Agentic-based project from scratch)
 ## 📘 Overview:
-This project is simply a medical terminal-assistant implemented under-the-hood as following:
+This project is simply an AI-powered tool (built from-scratch) to provide accurate and informative medical answers by leveraging a Multi-Agent collaboration techniques. Under the hood, it is implemented under-the-hood as following:
 
 <img width="900" src="https://github.com/user-attachments/assets/8c3e9e77-afa1-4859-bea7-9b307bb19682" alt="Project details">
 
