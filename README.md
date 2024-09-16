@@ -5,7 +5,7 @@ This project is simply a medical terminal-assistant implemented under-the-hood a
 <img width="900" src="https://github.com/user-attachments/assets/8c3e9e77-afa1-4859-bea7-9b307bb19682" alt="Project details">
 
 <details>
-<summary><h3> 🚩 click here to show the project images 🚩 </h3></summary>
+<summary><h3> 👇🚩 click here to show the project images 🚩👇 </h3></summary>
   
 * here is a snapshot of the (--verbose) mode:
 
