@@ -13,16 +13,16 @@ ________________
 
 * ### ReAct-Based Agent
   The core component of the assistant is a **ReAct-based agent** responsible for routing user queries to the most suitable too (based on description given in the ReAct prompt). This agent employs a   decision-making process to determine which tool is best equipped to handle the query based on its content and complexity.
-* ### RAG Tool
-  When a query is routed to the RAG tool, the following steps are executed:<br></br>
-  - **Multi-Query Retrieval**: Multiple queries are generated from the original query to retrieve a more diverse set of relevant documents. This approach enhances the richness and comprehensiveness of the retrieved information.
-  - **Document Ranking and Cleaning**: The retrieved documents are ranked based on their relevance to the query, and duplicates are removed to ensure a clean and focused dataset.
-  - **Relevance Evaluation**: The cleaned documents are passed along with the original query to a model that evaluates their relevance. This step helps identify the most pertinent documents for answering the query.
-* ### Web Search Tool
-  when the query is routed to web search, I implemented from scratch a web search tool that:
-  - **Searches the Internet**: The tool employs DuckDuckGo search engine to retrieve relevant web pages based on the query.
-  - **Text Extraction**: The retrieved web pages are processed to extract relevant text content.
-  - **Model Processing**: The extracted text is passed to a model that generates a response related to the original query.
+  - * ### RAG Tool
+    When a query is routed to the RAG tool, the following steps are executed:<br></br>
+    - **Multi-Query Retrieval**: Multiple queries are generated from the original query to retrieve a more diverse set of relevant documents. This approach enhances the richness and comprehensiveness of the retrieved information.
+    - **Document Ranking and Cleaning**: The retrieved documents are ranked based on their relevance to the query, and duplicates are removed to ensure a clean and focused dataset.
+    - **Relevance Evaluation**: The cleaned documents are passed along with the original query to a model that evaluates their relevance. This step helps identify the most pertinent documents for answering the query.
+  - * ### Web Search Tool
+    when the query is routed to web search, I implemented from scratch a web search tool that:
+    - **Searches the Internet**: The tool employs DuckDuckGo search engine to retrieve relevant web pages based on the query.
+    - **Text Extraction**: The retrieved web pages are processed to extract relevant text content.
+    - **Model Processing**: The extracted text is passed to a model that generates a response related to the original query.
 * ### Answer Evaluation and Refinement
   Once the ReAct agent does its loop and found the final response, two checks are conducted:
   - **Hallucination Check**: A separate ReAct loop is generated to compare the original response with a new response. If the responses are significantly different, it indicates potential hallucination. In such cases, the assistant re-generates the answer.
