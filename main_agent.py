@@ -41,7 +41,7 @@ class ReActAgent:
         Returns:
             str: The generated response.
         """
-        self.counter = 0 # this counter to prevent stucking the loop of obtimizing answers
+        
         result = self.ReAct_loop_object(Query, verbose=verbose)
         self.summarization_object.add_current_query_response(Query, result) # adds the current query and response to the summary.txt file
         self.messages = self.ReAct_loop_object.messages
@@ -83,7 +83,7 @@ class ReActAgent:
             str: The improved answer.
         """
         is_good_answer = self.grad_answer_object(query=query, answer=answer)
-        while self.counter<2:
+        while self.counter<1:
             self.counter+=1 # this counter to prevent stucking the loop of obtimizing answers
             if is_good_answer.lower() == 'no':
                 print(colored("we are optimizing your answer...","red"),flush=True)
@@ -103,6 +103,7 @@ class ReActAgent:
         """
         while True:
             query = input(colored("Input your query: ",'green'))
+            self.counter = 0 # this counter to prevent stucking the loop of obtimizing answers
             if query == 'exit':
                 break
             else:
