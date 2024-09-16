@@ -1,13 +1,14 @@
 #!/bin/bash
 
 function show_usage {
-    echo "Usage: $0 <type>"
-    echo "type: The type of the operation (search or rag)"
+    echo "usage: $0 [-h] --verbose | --no-verbose"
+    echo "run either ($0 --verbose) or ($0 --no-verbose)"
+
     exit 1
 }
 
 
-if [[ $# -ne 1 || ! $1 =~ ^(search|rag)$ ]]; then
+if [[ $# -ne 1 || ! $1 =~ ^(--verbose|--no-verbose)$ ]]; then
     show_usage
 else
     python main.py $1
