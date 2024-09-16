@@ -4,6 +4,7 @@ if "../" not in sys.path:
 
 from utils.initialize_gemini import initialize_gemini
 from helper_chains.check_relevance import relevance_chain
+from helper_chains.summarization_chain import SummarizationChain
 from prompts.retriever_prompt import retriever_prompt
 
 from langchain_core.output_parsers import StrOutputParser
@@ -21,6 +22,7 @@ class vectorstore_chain:
 
     def __init__(self, verbose=True):
         self.verbose = verbose
+        self.summarization_object = SummarizationChain() # for memory purposes.
 
     def __call__(self, query):
         """
@@ -33,8 +35,7 @@ class vectorstore_chain:
             str: The retrieved answer.
         """
         # Load conversation history (if any) for chat-memory purposes
-        with open("summary.txt", 'r') as f:  
-            self.history = f.read()
+        self.history = self.summarization_object.get_summary()
 
         # Initialize the RAG model and check-documents-relevance chain
         rag_model = initialize_gemini(api_config_path="config/api3.yaml") 
