@@ -1,7 +1,7 @@
 from helper_chains.check_hallucination import hallucination_chain
 from helper_chains.grad_answer import grad_answer_chain
 from helper_chains.ReAct_loop import ReActLoop
-
+from helper_chains.summarization_chain import SummarizationChain
 from termcolor import colored
 
 import warnings
@@ -24,6 +24,7 @@ class ReActAgent:
         self.ReAct_loop_object = ReActLoop(verbose=ReActAgent.general_verbosity)
         self.check_hallucination_object = hallucination_chain()
         self.grad_answer_object = grad_answer_chain()
+        self.summarization_object = SummarizationChain()
         self.messages = []
         self.history = ""
         with open("summary.txt", 'w') as f:
@@ -40,7 +41,9 @@ class ReActAgent:
         Returns:
             str: The generated response.
         """
+        self.counter = 0 # this counter to prevent stucking the loop of obtimizing answers
         result = self.ReAct_loop_object(Query, verbose=verbose)
+        self.summarization_object.add_current_query_response(Query, result) # adds the current query and response to the summary.txt file
         self.messages = self.ReAct_loop_object.messages
         return result
     
@@ -80,9 +83,8 @@ class ReActAgent:
             str: The improved answer.
         """
         is_good_answer = self.grad_answer_object(query=query, answer=answer)
-        counter = 0
-        while counter<3:
-            counter-=1 # this counter to prevent stucking the loop of obtimizing answers
+        while self.counter<2:
+            self.counter+=1 # this counter to prevent stucking the loop of obtimizing answers
             if is_good_answer.lower() == 'no':
                 print(colored("we are optimizing your answer...","red"),flush=True)
                 answer = self.__call__("rewrite the following query to give a better answer. "+query)
@@ -90,6 +92,7 @@ class ReActAgent:
                 is_good_answer =  self.grad_answer_object(query=query, answer=answer)
             else:
                 return answer
+        return answer
 
     def start(self, grad_answer=general_grading_option):
         """
