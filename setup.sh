@@ -1,5 +1,5 @@
 #!/bin/bash
 pip install requirements.txt
 chmod +x main_script.sh
-python create_vectordb.py
-python get_books_info.py
+python tools/create_vectordb.py
+python tools/get_books_info.py
