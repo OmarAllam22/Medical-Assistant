@@ -12,7 +12,7 @@ class SummarizationChain:
             self.chat_history = f.read()
         summarization_model = initialize_gemini(api_config_path="config/api2.yaml")
         chain = summarization_prompt | summarization_model | StrOutputParser()
-        return chain.invoke({"text":self.history})
+        return chain.invoke({"text":self.chat_history})
     
     def add_current_query_response(self, query, response):
         with open("summary.txt","a") as f:
