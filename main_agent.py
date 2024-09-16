@@ -18,10 +18,10 @@ class ReActAgent:
     general_verbosity = True
     general_grading_option = True
 
-    def __init__(self, verbose=True, grad_answer=general_grading_option):
+    def __init__(self, verbose, grad_answer=True):
         ReActAgent.general_verbosity = verbose
         ReActAgent.general_grading_option = grad_answer
-        self.ReAct_loop_object = ReActLoop(verbose=ReActAgent.general_verbosity)
+        self.ReAct_loop_object = ReActLoop(verbose=verbose)
         self.check_hallucination_object = hallucination_chain()
         self.grad_answer_object = grad_answer_chain()
         self.summarization_object = SummarizationChain()
@@ -30,19 +30,17 @@ class ReActAgent:
         with open("summary.txt", 'w') as f:
             f.write("")
     
-    def __call__(self, Query, verbose=general_verbosity):
+    def __call__(self, Query):
         """
         Processes a query using the ReAct loop.
 
         Args:
             Query (str): The input query.
-            verbose (bool, optional): Whether to print verbose output. Defaults to `general_verbosity` class variable.
 
         Returns:
             str: The generated response.
         """
-        
-        result = self.ReAct_loop_object(Query, verbose=verbose)
+        result = self.ReAct_loop_object(Query)
         self.summarization_object.add_current_query_response(Query, result) # adds the current query and response to the summary.txt file
         self.messages = self.ReAct_loop_object.messages
         return result
