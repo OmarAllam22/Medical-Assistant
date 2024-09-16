@@ -32,7 +32,7 @@ ________________
     - The final application was containerized by building a **windows-based docker-image** from the DockerFile.
 ________________
 ## 📘 How to use (You have 2 choices):
-
+❗❗ Before using it, make sure you put your own four `GOOGLE_API_KEY` instead of `xxxxx` in the four files in `config` directoy. (they are four to balance the request-load)
 ### First, For *Linux users*:
    * 1️⃣ run `git clone https://github.com/OmarAllam22/Medical-Assistant.git` to clone the repo.
    * 2️⃣ enter the directory of the project  `cd Medical-Assitant`
