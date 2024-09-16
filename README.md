@@ -6,6 +6,7 @@ This project is simply a medical terminal-assistant implemented under-the-hood a
 
 <details>
 <summary><h3> 🚩 click here to show the project images 🚩 </h3></summary>
+  
 * here is a snapshot of the (--verbose) mode:
 
 <img height="200" src="https://github.com/user-attachments/assets/fe9f4a8e-504e-43ae-b879-783ff9d6051e" alt="--no-verbose mode">
