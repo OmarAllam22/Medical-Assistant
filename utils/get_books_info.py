@@ -1,7 +1,11 @@
+import sys
+if "../" not in sys.path:
+    sys.path.append("../")
+
 import PyPDF2
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
-from utils import initialize_gemini 
+from initialize_gemini import initialize_gemini 
 import os
 
 class GetBooksInfo:
