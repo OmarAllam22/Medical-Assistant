@@ -1,3 +1,7 @@
+import sys
+if "../" not in sys.path:
+    sys.path.append("../")
+
 import os, yaml
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
