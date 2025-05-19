@@ -2,3 +2,4 @@
 !requirements.txt
 *.ipynb
 databases
+.idea
